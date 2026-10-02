@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>AetherVault – Your files, everywhere</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>☁️</text></svg>">
+<style>
+:root{--bg:#0a0b16;--panel:#10121f;--row:#14172a;--line:#222642;--text:#eef0fb;--mute:#8b90b0;--acc:#6d5efc;--acc2:#8f7bff;--warn:#ffc83d;--red:#ef4f5f;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]){--bg:#0a0b16}}
+*{box-sizing:border-box}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font:15px/1.4 "Plus Jakarta Sans",system-ui,-apple-system,"Segoe UI",sans-serif}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible{outline:2px solid var(--warn);outline-offset:2px}
+.app{display:grid;grid-template-columns:240px 1fr 380px;grid-template-rows:auto 1fr;min-height:100vh}
+header{grid-column:1/-1;display:flex;align-items:center;gap:24px;padding:14px 22px;border-bottom:1px solid var(--line)}
+.logo{display:flex;align-items:center;gap:12px;font-weight:800;letter-spacing:.06em;width:216px}
+.logo i{width:38px;height:38px;border-radius:11px;background:linear-gradient(135deg,var(--acc),#a78bfa);display:grid;place-items:center;font-style:normal;font-size:20px}
+.search{flex:1;max-width:520px;background:var(--panel);border:1px solid var(--line);border-radius:14px;display:flex;align-items:center;gap:10px;padding:0 16px}
+.search input{flex:1;background:none;border:0;color:var(--text);padding:13px 0;font:inherit}
+.search input::placeholder{color:var(--mute)}
+.top-r{margin-left:auto;display:flex;align-items:center;gap:16px}
+.btn{border:1px solid var(--line);background:var(--panel);border-radius:12px;padding:10px 18px;display:inline-flex;align-items:center;gap:8px}
+.btn.pri{background:linear-gradient(135deg,var(--acc),var(--acc2));border-color:transparent;font-weight:700}
+.btn.del{color:var(--red);border-color:#4a2230}
+.avatar{width:36px;height:36px;border-radius:50%;background:#2b2f52;display:grid;place-items:center;font-weight:700}
+nav{padding:18px 14px;border-right:1px solid var(--line);display:flex;flex-direction:column;gap:4px}
+nav button{background:none;border:0;display:flex;gap:14px;align-items:center;padding:13px 16px;border-radius:12px;color:var(--mute);text-align:left}
+nav button.on{background:#1b1f45;color:#fff}
+.stor{margin-top:30px;padding:0 6px;color:var(--mute);font-size:13px}
+.stor b{color:var(--text);font-size:15px;display:block;margin-bottom:10px}
+.bar{height:8px;background:#1a1d36;border-radius:8px;overflow:hidden;margin-bottom:8px}
+.bar span{display:block;height:100%;width:60%;background:linear-gradient(90deg,var(--acc),var(--acc2));border-radius:8px;transition:width .4s}
+.upg{margin:18px 0 0;width:100%;border:1px solid var(--acc);background:#141637;color:#c9c2ff;border-radius:12px;padding:13px}
+main{padding:22px 24px 30px;min-width:0}
+.h{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.h h1{margin:0;font-size:28px}
+.folders{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:20px}
+.folders button{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 20px;display:flex;gap:12px;align-items:center}
+.folders button.on{border-color:var(--acc)}
+.fi{width:26px;height:20px;border-radius:5px}
+.tbl{background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.r{display:grid;grid-template-columns:2.4fr 1fr 1fr 1.2fr 150px;align-items:center;padding:0 20px;min-height:54px;border-top:1px solid var(--line);background:none;width:100%;border-left:0;border-right:0;border-bottom:0;text-align:left;color:var(--text)}
+.r.hd{color:var(--mute);font-size:13px;min-height:44px;border-top:0}
+.r.f:hover{background:#171a30}
+.r.sel{background:#1c1f45}
+.nm{display:flex;align-items:center;gap:14px}
+.ic{width:32px;height:32px;border-radius:8px;display:grid;place-items:center;font-size:11px;font-weight:800;color:#fff;flex:none}
+.act{display:flex;gap:10px;justify-content:flex-end;visibility:hidden}
+.r.sel .act,.r.f:hover .act{visibility:visible}
+.act span{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;color:var(--mute)}
+.act .watch{border:2px solid var(--warn);color:#fff}
+.tip{position:relative;display:none;justify-content:flex-end;margin:-6px 0 0}
+.empty{padding:40px;text-align:center;color:var(--mute)}
+aside{border-left:1px solid var(--line);padding:20px;min-width:0}
+aside .t{display:flex;align-items:center;gap:12px;margin-bottom:18px;font-weight:600}
+.vid{position:relative;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:linear-gradient(#5aa8ee 0%,#a9d6f7 38%,#2bc3c9 52%,#1189b8 75%,#0b5f8f 100%)}
+.vid .cl{position:absolute;background:#fff;border-radius:50px;filter:blur(2px);opacity:.9}
+.vid .is{position:absolute;left:0;bottom:30%;width:45%;height:20%;background:#2f7a4a;border-radius:0 100% 0 0}
+.play{position:absolute;inset:0;margin:auto;width:76px;height:76px;border-radius:50%;border:0;background:#0b0c14cc;display:grid;place-items:center;font-size:30px;color:#fff;transition:opacity .2s}
+.vid.on .play{opacity:0}
+.vid.on:hover .play{opacity:1}
+.sweep{position:absolute;inset:0;background:linear-gradient(100deg,transparent 40%,#fff3 50%,transparent 60%);transform:translateX(-100%)}
+.vid.on .sweep{animation:sw 3s linear infinite}
+@keyframes sw{to{transform:translateX(100%)}}
+@media (prefers-reduced-motion:reduce){.vid.on .sweep{animation:none}}
+.prog{height:4px;background:#ffffff40;position:absolute;left:0;right:0;bottom:0}
+.prog i{display:block;height:100%;width:10%;background:var(--acc2)}
+.ctl{display:flex;align-items:center;justify-content:space-between;padding:12px 4px;color:var(--text);font-size:14px}
+.det{margin:14px 0}
+.det h3{margin:0 0 12px;font-size:17px}
+.det dl{display:grid;grid-template-columns:90px 1fr;gap:10px 8px;margin:0;font-size:14px}
+.det dt{color:var(--mute)}.det dd{margin:0}
+.pb{display:flex;gap:10px;flex-wrap:wrap}
+.flow{grid-column:1/-1;display:flex;align-items:center;justify-content:center;gap:28px;padding:22px;border-top:1px solid var(--line);flex-wrap:wrap}
+.dev{border:2px solid var(--warn);border-radius:12px;padding:14px 20px;text-align:center;min-width:210px;background:var(--panel)}
+.dev small{display:block;background:var(--warn);color:#161616;font-weight:800;border-radius:20px;padding:5px 12px;margin-top:10px}
+.dev .pic{font-size:34px}
+.arr{font-size:30px;color:#fff}
+.cloud{text-align:center}.cloud .c{font-size:56px;line-height:1}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translate(-50%,30px);background:#1e2250;border:1px solid var(--acc);padding:12px 20px;border-radius:12px;opacity:0;transition:.25s;pointer-events:none}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+@media(max-width:1100px){.app{grid-template-columns:200px 1fr}aside{grid-column:1/-1;border-left:0;border-top:1px solid var(--line)}}
+@media(max-width:720px){.app{grid-template-columns:1fr}nav{flex-direction:row;overflow-x:auto;border-right:0;border-bottom:1px solid var(--line)}nav .stor,nav .upg{display:none}.logo{width:auto}.logo span{display:none}.avatar+span,.top-r .nb{display:none}.tw{overflow-x:auto}.r{min-width:640px}}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+  <div class="logo"><i>☁</i><span>AETHERVAULT</span></div>
+  <label class="search">🔍<input id="q" type="search" placeholder="Search your files…" aria-label="Search your files"></label>
+  <div class="top-r"><button class="btn pri" id="up">⬆ Upload</button><span class="nb">🔔</span><div class="avatar">S</div></div>
+</header>
+<nav>
+  <button class="on">📁 All Files</button><button>🕘 Recent</button><button>👥 Shared with me</button><button>⭐ Starred</button><button>🗑 Trash</button>
+  <div class="stor"><b>Storage</b><div class="bar"><span id="bar"></span></div><span id="used">1.2 GB / 2 GB (60%)</span>
+  <button class="upg" id="upg">Upgrade Storage</button></div>
+</nav>
+<main>
+  <div class="h"><h1>All Files</h1><button class="btn" id="nf">＋ New Folder</button></div>
+  <div class="folders" id="folders"></div>
+  <div class="tbl tw"><div class="r hd"><span>Name</span><span>Type</span><span>Size</span><span>Date Added</span><span></span></div><div id="rows"></div></div>
+</main>
+<aside>
+  <div class="t"><span class="ic" id="aic" style="background:var(--acc)">▶</span><span id="aname"></span></div>
+  <div class="vid" id="vid"><div class="cl" style="left:50%;top:10%;width:90px;height:26px"></div><div class="cl" style="left:72%;top:22%;width:120px;height:34px"></div><div class="is"></div><div class="sweep"></div>
+    <button class="play" id="play" aria-label="Play or pause">▶</button><div class="prog"><i id="pg"></i></div></div>
+  <div class="ctl"><span>⏭ &nbsp;<span id="tm">0:32</span> / 5:10</span><span>🔊 ⚙ ⛶</span></div>
+  <div class="det"><h3>Video Details</h3><dl><dt>Name</dt><dd id="dn"></dd><dt>Type</dt><dd id="dt"></dd><dt>Size</dt><dd id="ds"></dd><dt>Uploaded</dt><dd id="du"></dd></dl></div>
+  <div class="pb"><button class="btn pri" id="sh">Share</button><button class="btn" id="dl">⬇ Download</button><button class="btn del" id="rm">🗑 Delete</button></div>
+</aside>
+<div class="flow">
+  <div class="dev"><div class="pic">💻</div>Report.docx<br><b>my_travel_video.mp4 ✓</b><small>Upload video from laptop</small></div>
+  <span class="arr">➜</span>
+  <div class="cloud"><div class="c">☁️</div><b>Stored online</b><br><span style="color:var(--mute)">(your cloud)</span></div>
+  <span class="arr">➜</span>
+  <div class="dev"><div class="pic">📱</div>Same video, same place<small>Watch it from your phone</small></div>
+</div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+var files=[
+{n:"Notes.pdf",t:"PDF",s:"1.4 MB",d:"22 Sep 2026",c:"#e0453d",l:"PDF",f:"Documents"},
+{n:"Report.docx",t:"DOCX",s:"2.1 MB",d:"21 Sep 2026",c:"#2f6fe0",l:"Wi",f:"Documents"},
+{n:"my_travel_video.mp4",t:"Video",s:"250 MB",d:"20 Sep 2026",c:"#6d5efc",l:"▶",f:"Videos",v:1},
+{n:"photo.jpg",t:"Image",s:"3.2 MB",d:"20 Sep 2026",c:"#5b8bd6",l:"IMG",f:"Photos"},
+{n:"project.zip",t:"ZIP",s:"15 MB",d:"19 Sep 2026",c:"#e8a21c",l:"ZIP",f:"Projects"},
+{n:"resume.pdf",t:"PDF",s:"450 KB",d:"18 Sep 2026",c:"#e0455d",l:"PDF",f:"Documents"},
+{n:"dataset.csv",t:"CSV",s:"1.1 MB",d:"17 Sep 2026",c:"#2bb58f",l:"CSV",f:"Others"}];
+var fol=[["Documents","#3b9cf0"],["Videos","#8b5cf6"],["Photos","#3ec9a7"],["Projects","#f59e0b"],["Others","#6b7bb0"]];
+var sel=2,filt="",folder="",playing=false,sec=32,timer;
+var $=function(i){return document.getElementById(i)};
+function toast(m){var t=$("toast");t.textContent=m;t.classList.add("show");clearTimeout(t._h);t._h=setTimeout(function(){t.classList.remove("show")},1800)}
+function esc(s){return s.replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+function draw(){
+ $("folders").innerHTML=fol.map(function(f){return '<button data-f="'+esc(f[0])+'" class="'+(folder==f[0]?"on":"")+'"><span class="fi" style="background:'+f[1]+'"></span>'+esc(f[0])+'</button>'}).join("");
+ var list=files.map(function(f,i){return[f,i]}).filter(function(p){return p[0].n.toLowerCase().indexOf(filt)>-1&&(!folder||p[0].f==folder)});
+ $("rows").innerHTML=list.length?list.map(function(p){var f=p[0],i=p[1];
+  return '<button class="r f'+(i==sel?" sel":"")+'" data-i="'+i+'"><span class="nm"><span class="ic" style="background:'+f.c+'">'+f.l+'</span>'+esc(f.n)+'</span><span>'+f.t+'</span><span>'+f.s+'</span><span>'+f.d+'</span><span class="act">'+(f.v?'<span class="watch" data-w="'+i+'">▷</span>':'')+'<span>⇪</span><span>⬇</span></span></button>'}).join(""):'<div class="empty">No files match. Try another name or folder.</div>';
+ var f=files[sel];if(!f)return;
+ $("aname").textContent=f.n;$("aic").style.background=f.c;$("aic").textContent=f.l;
+ $("dn").textContent=f.n;$("dt").textContent=f.t+(f.v?" (MP4)":"");$("ds").textContent=f.s;$("du").textContent=f.d+", 10:15 AM";
+ $("vid").style.opacity=f.v?1:.45;
+}
+function setPlay(p){playing=p;$("vid").classList.toggle("on",p);$("play").textContent=p?"❚❚":"▶";clearInterval(timer);
+ if(p)timer=setInterval(function(){sec=(sec+1)%310;tick()},1000)}
+function tick(){$("tm").textContent=Math.floor(sec/60)+":"+("0"+sec%60).slice(-2);$("pg").style.width=(sec/310*100)+"%"}
+$("rows").onclick=function(e){var w=e.target.closest("[data-w]"),r=e.target.closest("[data-i]");if(!r)return;sel=+r.dataset.i;draw();if(w){setPlay(true);toast("Playing "+files[sel].n)}};
+$("folders").onclick=function(e){var b=e.target.closest("[data-f]");if(!b)return;folder=folder==b.dataset.f?"":b.dataset.f;draw()};
+$("q").oninput=function(e){filt=e.target.value.toLowerCase();draw()};
+$("play").onclick=function(){setPlay(!playing)};
+$("up").onclick=function(){var n="clip_"+(files.length+1)+".mp4";files.unshift({n:n,t:"Video",s:"48 MB",d:"2 Oct 2026",c:"#6d5efc",l:"▶",f:"Videos",v:1});sel=0;draw();toast("Uploaded "+n+" – it's now on all your devices");$("bar").style.width="62%";$("used").textContent="1.25 GB / 2 GB (62%)"};
+$("nf").onclick=function(){var n=prompt("Folder name");if(n){fol.push([n,"#6b7bb0"]);draw()}};
+$("sh").onclick=function(){toast("Share link copied")};
+$("dl").onclick=function(){toast("Download started")};
+$("upg").onclick=function(){toast("Upgrade plans coming soon")};
+$("rm").onclick=function(){if(!files.length)return;files.splice(sel,1);sel=0;draw();toast("Moved to Trash")};
+$("bar").style.width="60%";draw();tick();
+</script>
+</body>
+</html>
